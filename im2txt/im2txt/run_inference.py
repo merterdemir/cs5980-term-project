@@ -87,13 +87,13 @@ def main(_):
     # Prepare the caption generator. Here we are implicitly using the default
     # beam search parameters. See caption_generator.py for a description of the
     # available beam search parameters.
-    generator = caption_generator.CaptionGenerator(model, vocab)
+    generator = caption_generator.CaptionGenerator(model, vocab, beam_size=5)
 
     for filename in filenames:
       with tf.gfile.GFile(filename, "rb") as f:
         image = f.read()
       captions = generator.beam_search(sess, image)
-      print("Captions for image %s:" % os.path.basename(filename))
+      # print("Captions for image %s:" % os.path.basename(filename))
       for i, caption in enumerate(captions):
         # Ignore begin and end words.
         sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
