@@ -103,8 +103,13 @@ std::vector<std::pair<std::string, std::string>> parse_string(std::string string
         auto length = guessStrings.at(i).length();
         prob = guessStrings.at(i).substr(length - 9, 8);
         caption = rtrim(guessStrings.at(i).substr(5, length - 17));
-        if (caption.substr(caption.length() - 1) == ".")
-            caption = rtrim(caption.substr(0, caption.length() - 1));
+
+        // Don't delete the dot. It is different with dot or without
+        // Since one of them is a sentence, whereas the other one is a subsentence.
+
+        // if (caption.substr(caption.length() - 1) == ".")
+        //     caption = rtrim(caption.substr(0, caption.length() - 1));
+
         data.push_back({PRED_LABEL + std::to_string(i), caption});
         data.push_back({PROB_LABEL + std::to_string(i), prob});
     }
