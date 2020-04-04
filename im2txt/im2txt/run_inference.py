@@ -60,6 +60,7 @@ tf.flags.DEFINE_string("vocab_file", "", "Text file containing the vocabulary.")
 tf.flags.DEFINE_string("input_files", "",
                        "File pattern or comma-separated list of file patterns "
                        "of image files.")
+tf.flags.DEFINE_string("beam_size", "", "Number of generated captions.")
 
 
 def main(_):
@@ -74,6 +75,9 @@ def main(_):
   # Create the vocabulary.
   vocab = vocabulary.Vocabulary(FLAGS.vocab_file)
 
+  # Init beam size
+  beam_size = int(FLAGS.beam_size)
+
   filenames = []
   for file_pattern in FLAGS.input_files.split(","):
     filenames.extend(tf.gfile.Glob(file_pattern))
@@ -87,7 +91,7 @@ def main(_):
     # Prepare the caption generator. Here we are implicitly using the default
     # beam search parameters. See caption_generator.py for a description of the
     # available beam search parameters.
-    generator = caption_generator.CaptionGenerator(model, vocab, beam_size=5)
+    generator = caption_generator.CaptionGenerator(model, vocab, beam_size=beam_size)
 
     for filename in filenames:
       with tf.gfile.GFile(filename, "rb") as f:
