@@ -55,8 +55,6 @@ def _validate_parameters(args):
     else:
         logging.warning("Export folder doesn't exists. Creating the export folder.")
         os.mkdir(args.export)
-
-    if 
     return True
 
 def _parameter_parser():
