@@ -7,6 +7,7 @@ import logging
 import time
 import csv
 import json
+
 def _get_image_names(path):
     VALID_EXTENTIONS = ('.jpg', '.jpeg', '.png', '.gif', '.JPG', '.JPEG', '.PNG', '.GIF')
     filenames = [os.path.join(os.getcwd(),path,f) for f in os.listdir(path) if f.endswith(VALID_EXTENTIONS) and os.path.isfile(os.path.join(path, f))]
@@ -54,6 +55,8 @@ def _validate_parameters(args):
     else:
         logging.warning("Export folder doesn't exists. Creating the export folder.")
         os.mkdir(args.export)
+
+    if 
     return True
 
 def _parameter_parser():
@@ -104,23 +107,29 @@ def _parameter_parser():
                         nargs='?',
                         default=3,
 	                    help = "Number of generated captions at the end.")
+
     parser.add_argument("-m","--multiprocessing",
                         type=bool,
                         nargs='?',
                         default=True,
+                        const=True,
+                        choices=[True, False],
                         help = "Run on multiple threads.")
+
     parser.add_argument("-gpu","--GPU",
                         type=bool,
                         nargs='?',
                         default=False,
+                        const=True,
+                        choices=[True, False],
                         help = "Run on GPU.")
 
     return parser.parse_args()
 
-def _export_data(data,filename,filetype,num_of_predictions):
+def _export_data(data, filename, filetype, num_of_predictions):
     try:
         logging.info("Exporting captions to {}.".format(filetype))
-        with open(os.path.join(filename+"."+filetype),"w") as f:
+        with open(os.path.join(filename + "." + filetype), "w") as f:
             if (filetype == 'csv'):
                 fieldnames = ['id']
                 for i in range(num_of_predictions):
@@ -138,7 +147,7 @@ def _export_data(data,filename,filetype,num_of_predictions):
     except Exception as e:
         logging.error("Error while exporting captions: "+str(e))
         return False
-    
+
 def main(args):
     from im2txt import run_inference
     filenames = _get_image_names(args.FILE)
@@ -147,11 +156,11 @@ def main(args):
     beam_size = args.beam_size
     logging.info("Generating Captions for {} images".format(len(filenames)))
     start = time.time()
-    m = run_inference.generate_captions(checkpoint_path,vocab_path,filenames,beam_size,multiprocessing = args.multiprocessing, GPU = args.GPU)
+    m = run_inference.generate_captions(checkpoint_path, vocab_path, filenames, beam_size, multiprocessing=args.multiprocessing, GPU=args.GPU)
     logging.info("Done!")
     logging.info("Generating captions for {} images took {:.2f} seconds".format(len(filenames),time.time()-start))
-    _export_data(m,args.export,args.export_type,args.beam_size)
-    input()
+    _export_data(m, args.export, args.export_type, args.beam_size)
+    # input()
 
 if (__name__ == "__main__"):
     args = _parameter_parser()

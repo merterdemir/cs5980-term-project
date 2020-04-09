@@ -49,7 +49,7 @@ from im2txt import inference_wrapper
 from im2txt.inference_utils import caption_generator
 from im2txt.inference_utils import vocabulary
 
-def generate_caption(filenames,checkpoint_path,vocab,beam_size):
+def generate_caption(filenames, checkpoint_path, vocab, beam_size):
     #import sys
     #sys.stdout = open(str(os.getpid())+".out",'a')
     # Build the inference graph.
@@ -82,37 +82,35 @@ def generate_caption(filenames,checkpoint_path,vocab,beam_size):
               #print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
             result.append((filename,cap))
     return result
-      
 
-def generate_captions(checkpoint_path,vocab_file,filenames,beam_size,multiprocessing = True, GPU = False):
+def generate_captions(checkpoint_path, vocab_file, filenames, beam_size, multiprocessing=True, GPU=False):
   if not GPU:
       os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
   # Create the vocabulary.
   vocab = vocabulary.Vocabulary(vocab_file)
 
-  
   tf.logging.info("Running caption generation on %d files",
                   len(filenames))
-    
+
   if not multiprocessing:
-      return generate_caption(filenames,checkpoint_path,vocab,beam_size)
+      return generate_caption(filenames, checkpoint_path, vocab, beam_size)
   else:
       from functools import partial
       from multiprocessing import Pool,cpu_count
-          
-      part = partial(generate_caption,checkpoint_path = checkpoint_path,vocab = vocab,beam_size = beam_size)
+
+      part = partial(generate_caption, checkpoint_path=checkpoint_path, vocab=vocab, beam_size=beam_size)
       # Splits the list a into n equal sized parts
       def split(a, n):
           k, m = divmod(len(a), n)
           return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
-      filenames = list(split(filenames,cpu_count()))
+      filenames = list(split(filenames, cpu_count()))
       with Pool(cpu_count()) as p:
           l = list(p.map(part, filenames))
       result = []
       for r in l:
           result.extend(r)
       return result
-    
+
 if __name__ == "__main__":
   tf.app.run()
