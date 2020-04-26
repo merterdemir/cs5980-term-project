@@ -49,6 +49,7 @@ with open(filename, 'r', encoding='utf-8') as f:
 # create mapping of unique chars to integers
 chars = sorted(list(set(raw_text)))
 char_to_int = dict((c, i) for i, c in enumerate(chars))
+int_to_char = dict((i, c) for i, c in enumerate(chars))
 # summarize the loaded data
 n_chars = len(raw_text)
 n_vocab = len(chars)
@@ -86,9 +87,9 @@ model.add(Dropout(0.2))
 model.add(LSTM(700))
 model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
-model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 if (len(sys.argv) > 1 and sys.argv[1] == "train"):
+    model.compile(loss='categorical_crossentropy', optimizer='adam')
     # define the checkpoint
     filepath="weights-improvement-{epoch:02d}-{loss:.4f}-bigger.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
@@ -104,7 +105,7 @@ else:
     #                           - Mert  #
     #####################################
     # load the network weights
-    filename = "weights-improvement-47-1.2219-bigger.hdf5"
+    filename = "weights-improvement-01-3.0464-bigger.hdf5"
     model.load_weights(filename)
     model.compile(loss='categorical_crossentropy', optimizer='adam')
 
