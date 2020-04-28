@@ -55,7 +55,7 @@ module load tensorflow/1.7.0_cuda-9.0.176.1_python-3.6.4
 module load python/3.6.4
 pip install libhdf5-dev
 
-python text_generator.py 
+python text_generator.py train
 
 #Print the end date of the job before exiting
 echo Now it is: `date`
