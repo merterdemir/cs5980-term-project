@@ -9,7 +9,6 @@ def readFile():
         p = df["prediction"+str(i)]
         output = open("prediction"+str(i)+".txt","w")
         for r in p:
-            r = r.strip(".")
             output.write(str(r)+"\n")
         output.close()
         
