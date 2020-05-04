@@ -105,7 +105,7 @@ else:
     #                           - Mert  #
     #####################################
     # load the network weights
-    filename = "weights-improvement-01-3.0464-bigger.hdf5"
+    filename = "weights-improvement-55-0.3146-bigger.hdf5"
     model.load_weights(filename)
     model.compile(loss='categorical_crossentropy', optimizer='adam')
 
@@ -117,6 +117,28 @@ else:
     #                           - Mert  #
     #####################################
     # pick a random seed
+    with open("prediction0.txt","r") as file:
+            with open("results.txt","w") as resultFile:
+                    count = 1
+                    for line in file:
+                         resultFile.write("{}: {}\n".format(count,line))
+                         count += 1
+                         print(count)
+                         pattern = [char_to_int[char] for char in line]
+                         end = numpy.random.randint(0,len(chars),100-len(pattern))
+                         pattern += [char_to_int[chars[e]] for e in end]
+                         for i in range(1000):
+                                x = numpy.reshape(pattern, (1, len(pattern), 1))
+                                x = x / float(n_vocab)
+                                prediction = model.predict(x, verbose=0)
+                                index = numpy.argmax(prediction)
+                                result = int_to_char[index]
+                                seq_in = [int_to_char[value] for value in pattern]
+                                resultFile.write(result)
+                                #sys.stdout.write(result)
+                                pattern.append(index)
+                                pattern = pattern[1:len(pattern)]
+                         resultFile.write("\n")
     start = numpy.random.randint(0, len(dataX)-1)
     pattern = dataX[start]
     print("Seed:")
@@ -132,14 +154,5 @@ else:
     #                           - Mert  #
     #####################################
     # generate characters
-    for i in range(1000):
-        x = numpy.reshape(pattern, (1, len(pattern), 1))
-        x = x / float(n_vocab)
-        prediction = model.predict(x, verbose=0)
-        index = numpy.argmax(prediction)
-        result = int_to_char[index]
-        seq_in = [int_to_char[value] for value in pattern]
-        sys.stdout.write(result)
-        pattern.append(index)
-        pattern = pattern[1:len(pattern)]
+    
     print("\nDone.")
